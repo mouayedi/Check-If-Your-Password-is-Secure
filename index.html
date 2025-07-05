@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -30,7 +31,7 @@
       max-width: 500px;
       width: 90%;
       text-align: center;
-      box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+      box-shadow: 0 0 40px rgba(0, 255, 0, 0.3);
       margin: 80px auto;
       position: relative;
       z-index: 1;
@@ -85,8 +86,8 @@
       font-size: 15px;
     }
     .checklist div.met::before {
-      content: '✔️ ';
-      color: #00ff99;
+      content: '✅ ';
+      color: #00ff00;
     }
     .checklist div:not(.met)::before {
       content: '❌ ';
@@ -136,14 +137,14 @@
 </head>
 <body id="bg">
   <canvas id="stars"></canvas>
-  <div class="container">
+  <div class="container" id="containerBox">
     <h2>Password Strength Checker</h2>
     <div class="input-group">
       <input type="password" id="password" placeholder="Enter your password" oninput="checkStrength()">
       <span class="toggle-visibility" onclick="toggleVisibility()">Show</span>
     </div>
     <div id="strength-bar"><div id="bar-fill"></div></div>
-    <p id="feedback">Start typing...</p>
+    <p id="feedback">Start typing... <span id="emoji">🔒</span></p>
     <div class="checklist">
       <div id="length">At least 8 characters</div>
       <div id="uppercase">At least 1 uppercase letter</div>
@@ -175,6 +176,8 @@
       const password = document.getElementById("password").value;
       const barFill = document.getElementById("bar-fill");
       const feedback = document.getElementById("feedback");
+      const emoji = document.getElementById("emoji");
+      const container = document.getElementById("containerBox");
 
       let strength = 0;
       const hasLength = password.length >= 8;
@@ -196,20 +199,21 @@
       document.getElementById("special").className = hasSpecial ? "met" : "";
 
       const widthPercent = (strength / 5) * 100;
-      let color = "gray", text = "Start typing...", bgColor = "#1a1a1a";
+      let color = "gray", text = "Start typing...", bgColor = "#1a1a1a", glow = "0 0 40px rgba(0,255,255,0.3)", icon = "🔒";
 
       switch (strength) {
-        case 1: color = "#ff4d4d"; text = "Very Weak"; bgColor = "#330000"; break;
-        case 2: color = "#ff884d"; text = "Weak"; bgColor = "#4d2600"; break;
-        case 3: color = "#ffeb3b"; text = "Moderate"; bgColor = "#4d4d00"; break;
-        case 4: color = "#4dff4d"; text = "Strong"; bgColor = "#003300"; break;
-        case 5: color = "#00ff99"; text = "Very Strong"; bgColor = "#00261a"; break;
+        case 1: color = "#ff4d4d"; text = "Very Weak"; bgColor = "#330000"; glow = "0 0 40px rgba(255,0,0,0.3)"; icon = "😬"; break;
+        case 2: color = "#ff884d"; text = "Weak"; bgColor = "#4d2600"; glow = "0 0 40px rgba(255,136,77,0.3)"; icon = "😕"; break;
+        case 3: color = "#ffeb3b"; text = "Moderate"; bgColor = "#4d4d00"; glow = "0 0 40px rgba(255,235,59,0.3)"; icon = "🙂"; break;
+        case 4: color = "#4dff4d"; text = "Strong"; bgColor = "#003300"; glow = "0 0 40px rgba(77,255,77,0.3)"; icon = "😊"; break;
+        case 5: color = "#00ff99"; text = "Very Strong"; bgColor = "#00261a"; glow = "0 0 40px rgba(0,255,153,0.4)"; icon = "😎"; break;
       }
 
       barFill.style.width = `${widthPercent}%`;
       barFill.style.background = color;
-      feedback.innerHTML = text;
+      feedback.innerHTML = `${text} <span id="emoji">${icon}</span>`;
       document.body.style.backgroundColor = bgColor;
+      container.style.boxShadow = glow;
     }
 
     function toggleVisibility() {
@@ -256,7 +260,6 @@
       }
     }
 
-    // Stars animation
     const canvas = document.getElementById("stars");
     const ctx = canvas.getContext("2d");
     let stars = [];
@@ -283,11 +286,10 @@
       for (let s of stars) {
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
-        ctx.fillStyle = "#00ffe7";
+        ctx.fillStyle = "#ffffff";
         ctx.fill();
         s.x += s.dx;
         s.y += s.dy;
-
         if (s.x < 0 || s.x > canvas.width) s.dx *= -1;
         if (s.y < 0 || s.y > canvas.height) s.dy *= -1;
       }
