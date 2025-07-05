@@ -83,12 +83,11 @@
       color: #ccc;
       margin-top: 15px;
     }
-    .checklist li { margin-bottom: 5px; }
-    .checklist .met::before {
-      content: '✅ ';
+    .checklist div.met::before {
+      content: '✨ ';
       color: #7CFC00;
     }
-    .checklist li:not(.met)::before {
+    .checklist div:not(.met)::before {
       content: '❌ ';
       color: #ff4c4c;
     }
@@ -149,13 +148,15 @@
     </div>
     <div id="strength-bar"><div id="bar-fill"></div></div>
     <p id="feedback">Start typing... <span id="emoji">🔒</span></p>
-    <ul class="checklist">
-      <li id="length">At least 8 characters</li>
-      <li id="uppercase">At least 1 uppercase letter</li>
-      <li id="lowercase">At least 1 lowercase letter</li>
-      <li id="number">At least 1 number</li>
-      <li id="special">At least 1 special character</li>
-    </ul>
+
+    <div class="checklist">
+      <div id="length">At least 8 characters</div>
+      <div id="uppercase">At least 1 uppercase letter</div>
+      <div id="lowercase">At least 1 lowercase letter</div>
+      <div id="number">At least 1 number</div>
+      <div id="special">At least 1 special character</div>
+    </div>
+
     <p id="breach-warning"></p>
     <div id="breach-count"></div>
 
@@ -176,7 +177,7 @@
   </div>
 
   <footer>
-    Created by <a href="https://www.linkedin.com/in/mouayed-ibrahim/" target="_blank">Mouayed Ibrahim</a> • Inspired by someone who loves Cybersecuirty 🚀
+    Created by <a href="https://www.linkedin.com/in/mouayed-ibrahim/" target="_blank">Mouayed Ibrahim</a> • Inspired by someone who loves Cybersecurity 🚀
   </footer>
 
   <script>
@@ -250,19 +251,16 @@
     function saltPassword() {
       let pwd = document.getElementById("password").value;
       if (!pwd) return;
-
       const lower = "abcdefghijklmnopqrstuvwxyz";
       const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
       const nums = "0123456789";
       const special = "!@#$%^&*()-_=+[]{};:,.<>?";
       const all = lower + upper + nums + special;
-
       if (!/[A-Z]/.test(pwd)) pwd += upper[Math.floor(Math.random() * upper.length)];
       if (!/[a-z]/.test(pwd)) pwd += lower[Math.floor(Math.random() * lower.length)];
       if (!/[0-9]/.test(pwd)) pwd += nums[Math.floor(Math.random() * nums.length)];
       if (!/[^A-Za-z0-9]/.test(pwd)) pwd += special[Math.floor(Math.random() * special.length)];
       while (pwd.length < 12) pwd += all[Math.floor(Math.random() * all.length)];
-
       document.getElementById("password").value = pwd;
       checkStrength();
     }
@@ -314,12 +312,10 @@
       const password = document.getElementById("password").value;
       const algo = document.getElementById("hashAlgo").value;
       const output = document.getElementById("hash-output");
-
       if (!password) {
         output.textContent = "Please enter a password first.";
         return;
       }
-
       if (algo === "md5") {
         output.textContent = "MD5: " + CryptoJS.MD5(password).toString();
       } else if (algo === "sha256") {
@@ -329,7 +325,7 @@
       }
     }
 
-    // Star animation
+    // Enhanced animated background
     const canvas = document.getElementById("bg");
     const ctx = canvas.getContext("2d");
     let stars = [];
@@ -341,27 +337,28 @@
     window.addEventListener("resize", resizeCanvas);
     resizeCanvas();
 
-    for (let i = 0; i < 80; i++) {
+    for (let i = 0; i < 200; i++) {
       stars.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
         radius: Math.random() * 1.5 + 0.5,
-        speed: Math.random() * 0.3 + 0.1
+        dx: Math.random() * 0.5 - 0.25,
+        dy: Math.random() * 0.5 - 0.25
       });
     }
 
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let star of stars) {
+      for (let s of stars) {
         ctx.beginPath();
-        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-        ctx.fillStyle = "#fff";
+        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        ctx.fillStyle = "#00f7ff";
         ctx.fill();
-        star.y += star.speed;
-        if (star.y > canvas.height) {
-          star.y = 0;
-          star.x = Math.random() * canvas.width;
-        }
+        s.x += s.dx;
+        s.y += s.dy;
+
+        if (s.x < 0 || s.x > canvas.width) s.dx *= -1;
+        if (s.y < 0 || s.y > canvas.height) s.dy *= -1;
       }
       requestAnimationFrame(animate);
     }
