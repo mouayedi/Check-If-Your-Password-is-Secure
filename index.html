@@ -10,9 +10,14 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Poppins', sans-serif;
-      background: url('https://wallpaperaccess.com/full/1910825.jpg') no-repeat center center fixed;
-      background-size: cover;
+      transition: background 0.5s ease;
+      background: linear-gradient(120deg, #1a1a1a, #2c3e50);
       color: #f8f8f8;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
     .container {
       background: rgba(0, 0, 0, 0.8);
@@ -22,7 +27,6 @@
       width: 90%;
       text-align: center;
       box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
-      margin: 80px auto;
     }
     h2 {
       font-size: 28px;
@@ -123,7 +127,7 @@
     }
   </style>
 </head>
-<body>
+<body id="bg">
   <div class="container">
     <h2>Password Strength Checker</h2>
     <div class="input-group">
@@ -169,6 +173,7 @@
       const password = document.getElementById("password").value;
       const barFill = document.getElementById("bar-fill");
       const feedback = document.getElementById("feedback");
+      const bg = document.getElementById("bg");
 
       let strength = 0;
       const hasLength = password.length >= 8;
@@ -190,17 +195,20 @@
       document.getElementById("special").className = hasSpecial ? "met" : "";
 
       const widthPercent = (strength / 5) * 100;
-      let color = "gray", text = "Start typing...";
+      let color = "gray", text = "Start typing...", bgColor = "#1a1a1a";
+
       switch (strength) {
-        case 1: color = "red"; text = "Very Weak"; break;
-        case 2: color = "orange"; text = "Weak"; break;
-        case 3: color = "yellow"; text = "Moderate"; break;
-        case 4: color = "lightgreen"; text = "Strong"; break;
-        case 5: color = "limegreen"; text = "Very Strong"; break;
+        case 1: color = "#ff4d4d"; text = "Very Weak"; bgColor = "#330000"; break;
+        case 2: color = "#ff884d"; text = "Weak"; bgColor = "#4d2600"; break;
+        case 3: color = "#ffeb3b"; text = "Moderate"; bgColor = "#4d4d00"; break;
+        case 4: color = "#4dff4d"; text = "Strong"; bgColor = "#003300"; break;
+        case 5: color = "#00ff99"; text = "Very Strong"; bgColor = "#00261a"; break;
       }
+
       barFill.style.width = `${widthPercent}%`;
       barFill.style.background = color;
       feedback.innerHTML = text;
+      document.body.style.background = bgColor;
     }
 
     function toggleVisibility() {
@@ -246,9 +254,6 @@
         output.textContent = "SHA-256: " + CryptoJS.SHA256(password).toString();
       }
     }
-  </script>
-</body>
-</html>
   </script>
 </body>
 </html>
