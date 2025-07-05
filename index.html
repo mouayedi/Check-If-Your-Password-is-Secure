@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Password Strength Checker</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
@@ -75,8 +75,7 @@
     }
     #feedback {
       font-size: 16px;
-      margin-bottom: 14px;
-      color: #d4d4d4;
+      margin-bottom: 10px;
     }
     .checklist {
       text-align: left;
@@ -105,18 +104,26 @@
     button:hover, select:hover {
       background: #00c2a8;
     }
-    #breach-warning { color: #ff4c4c; margin-top: 12px; }
-    #breach-count { font-size: 13px; color: #ccc; }
+    #breach-warning {
+      color: #ff4c4c;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    #breach-count {
+      color: #aaa;
+      margin-top: 6px;
+      font-size: 13px;
+    }
     #hash-output {
-      margin-top: 14px;
+      margin-top: 12px;
       font-size: 13px;
       color: #00ffff;
     }
     footer {
       text-align: center;
-      margin-top: 30px;
+      color: #ccc;
       font-size: 13px;
-      color: #aaa;
+      margin-top: 30px;
     }
     footer a {
       color: #1de9b6;
@@ -127,7 +134,7 @@
     }
   </style>
 </head>
-<body id="bg">
+<body>
   <canvas id="stars"></canvas>
   <div class="container" id="containerBox">
     <h2>Password Strength Checker</h2>
@@ -161,15 +168,14 @@
     <div id="hash-output"></div>
   </div>
   <footer>
-    Built by <a href="https://www.linkedin.com/in/mouayed-ibrahim/" target="_blank">Mouayed Ibrahim</a> | Inspired by Cyber Enthusiasm 🚀
+    Built by <a href="https://www.linkedin.com/in/mouayed-ibrahim/" target="_blank">Mouayed Ibrahim</a>
   </footer>
 
   <script>
-    function checkStrength() {
+    async function checkStrength() {
       const password = document.getElementById("password").value;
       const barFill = document.getElementById("bar-fill");
       const feedback = document.getElementById("feedback");
-      const emoji = document.getElementById("emoji");
       const container = document.getElementById("containerBox");
 
       let strength = 0;
@@ -192,21 +198,21 @@
       document.getElementById("special").className = hasSpecial ? "met" : "";
 
       const widthPercent = (strength / 5) * 100;
-      let color = "gray", text = "Start typing...", bgColor = "#1a1a1a", glow = "0 0 40px rgba(0,255,255,0.3)", icon = "🔒";
+      let color = "#444", text = "Start typing...", emoji = "🔒";
 
       switch (strength) {
-        case 1: color = "#ff4d4d"; text = "Very Weak"; bgColor = "#330000"; glow = "0 0 40px rgba(255,0,0,0.3)"; icon = "😬"; break;
-        case 2: color = "#ff884d"; text = "Weak"; bgColor = "#4d2600"; glow = "0 0 40px rgba(255,136,77,0.3)"; icon = "😕"; break;
-        case 3: color = "#ffeb3b"; text = "Moderate"; bgColor = "#4d4d00"; glow = "0 0 40px rgba(255,235,59,0.3)"; icon = "🙂"; break;
-        case 4: color = "#4dff4d"; text = "Strong"; bgColor = "#003300"; glow = "0 0 40px rgba(77,255,77,0.3)"; icon = "😊"; break;
-        case 5: color = "#1de9b6"; text = "Very Strong"; bgColor = "#00261a"; glow = "0 0 40px rgba(29,233,182,0.4)"; icon = "😎"; break;
+        case 1: color = "#ff4d4d"; text = "Very Weak"; emoji = "😬"; break;
+        case 2: color = "#ff884d"; text = "Weak"; emoji = "😕"; break;
+        case 3: color = "#f6f94d"; text = "Moderate"; emoji = "🙂"; break;
+        case 4: color = "#4dfc58"; text = "Strong"; emoji = "😊"; break;
+        case 5: color = "#1de9b6"; text = "Very Strong"; emoji = "😎"; break;
       }
 
       barFill.style.width = `${widthPercent}%`;
       barFill.style.background = color;
-      feedback.innerHTML = `${text} <span id="emoji">${icon}</span>`;
-      document.body.style.backgroundColor = bgColor;
-      container.style.boxShadow = glow;
+      feedback.innerHTML = `${text} <span id="emoji">${emoji}</span>`;
+
+      checkHIBP(password);
     }
 
     function toggleVisibility() {
@@ -217,19 +223,30 @@
     }
 
     function generatePassword() {
-      const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
-      let password = "";
-      for (let i = 0; i < 12; i++) {
-        password += chars.charAt(Math.floor(Math.random() * chars.length));
+      const lower = "abcdefghijklmnopqrstuvwxyz";
+      const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const nums = "0123456789";
+      const special = "!@#$%^&*()_+-=[]{}|;:,.<>?";
+      const all = lower + upper + nums + special;
+
+      let password = [
+        lower[Math.floor(Math.random() * lower.length)],
+        upper[Math.floor(Math.random() * upper.length)],
+        nums[Math.floor(Math.random() * nums.length)],
+        special[Math.floor(Math.random() * special.length)]
+      ];
+
+      while (password.length < 12) {
+        password.push(all[Math.floor(Math.random() * all.length)]);
       }
+
+      password = password.sort(() => Math.random() - 0.5).join("");
       document.getElementById("password").value = password;
       checkStrength();
     }
 
     function saltPassword() {
       let pwd = document.getElementById("password").value;
-      if (!pwd) return;
-
       const lower = "abcdefghijklmnopqrstuvwxyz";
       const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
       const nums = "0123456789";
@@ -268,7 +285,45 @@
       }
     }
 
-    // Star animation
+    async function checkHIBP(password) {
+      const warning = document.getElementById("breach-warning");
+      const countDiv = document.getElementById("breach-count");
+
+      if (!password) {
+        warning.textContent = "";
+        countDiv.innerHTML = "";
+        return;
+      }
+
+      const hash = await sha1(password);
+      const prefix = hash.slice(0, 5);
+      const suffix = hash.slice(5).toUpperCase();
+
+      try {
+        const response = await fetch(`https://api.pwnedpasswords.com/range/${prefix}`);
+        const text = await response.text();
+        const found = text.split("\n").find(line => line.startsWith(suffix));
+        if (found) {
+          const count = found.split(":")[1];
+          warning.textContent = "⚠️ This password has been found in data breaches!";
+          countDiv.innerHTML = `Seen <strong>${count}</strong> times. Consider using a different password.`;
+        } else {
+          warning.innerHTML = "✅ This password was NOT found in known breaches.";
+          countDiv.innerHTML = "";
+        }
+      } catch (e) {
+        warning.textContent = "Error checking password breaches.";
+      }
+    }
+
+    async function sha1(str) {
+      const buffer = new TextEncoder("utf-8").encode(str);
+      const hashBuffer = await crypto.subtle.digest("SHA-1", buffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, "0")).join("").toUpperCase();
+    }
+
+    // Simple white stars animation
     const canvas = document.getElementById("stars");
     const ctx = canvas.getContext("2d");
     let stars = [];
@@ -277,31 +332,32 @@
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     }
+
     window.addEventListener("resize", resizeCanvas);
     resizeCanvas();
 
-    for (let i = 0; i < 150; i++) {
+    for (let i = 0; i < 120; i++) {
       stars.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        radius: Math.random() * 1.5 + 0.5,
-        dx: Math.random() * 0.4 - 0.2,
-        dy: Math.random() * 0.4 - 0.2
+        r: Math.random() * 1.5 + 0.5,
+        dx: Math.random() * 0.2 - 0.1,
+        dy: Math.random() * 0.2 - 0.1
       });
     }
 
     function animateStars() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let s of stars) {
+      ctx.fillStyle = "#ffffff";
+      stars.forEach(star => {
         ctx.beginPath();
-        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
-        ctx.fillStyle = "#ffffff";
+        ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
         ctx.fill();
-        s.x += s.dx;
-        s.y += s.dy;
-        if (s.x < 0 || s.x > canvas.width) s.dx *= -1;
-        if (s.y < 0 || s.y > canvas.height) s.dy *= -1;
-      }
+        star.x += star.dx;
+        star.y += star.dy;
+        if (star.x < 0 || star.x > canvas.width) star.dx *= -1;
+        if (star.y < 0 || star.y > canvas.height) star.dy *= -1;
+      });
       requestAnimationFrame(animateStars);
     }
     animateStars();
